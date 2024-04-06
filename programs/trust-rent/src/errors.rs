@@ -8,4 +8,6 @@ pub enum TrustRentErrors {
     InvalidDates,
     #[msg("The specified payment account is invalid")]
     InvalidPaymentAccount,
+    #[msg("The specified security deposit amount is invalid")]
+    InvalidSDAmount,
 }

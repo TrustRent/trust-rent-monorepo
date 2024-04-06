@@ -49,6 +49,7 @@ describe("trust-rent", () => {
     program.programId
   );
   const rentAmount = new anchor.BN(2400);
+  const sdAmount = new anchor.BN(rentAmount.toNumber() * 1.5);
   it("should create rental agreement", async () => {
     const landlordairdroptx = await provider.connection.requestAirdrop(
       landlordPublicKey,
@@ -80,7 +81,7 @@ describe("trust-rent", () => {
     console.log("Creating rent agreement");
     try {
       const tx = await program.methods
-        .createRentAgreement(rentAmount, startDate, endDate)
+        .createRentAgreement(rentAmount, sdAmount, startDate, endDate)
         .accounts({
           rentalAgreement: pdaPubkey,
           collectionAccount: collectionAccountAddress,
@@ -150,6 +151,44 @@ describe("trust-rent", () => {
     try {
       const tx = await program.methods
         .payRent(rentAmount)
+        .accounts({
+          rentalAgreement: pdaPubkey,
+          landlord: landlordPublicKey,
+          usdcMint: mintPubkey,
+          tenant: tenantPubkey,
+          tenantUsdc: tenantUsdc,
+          paymentCollectionAccount: collectionAccountAddress,
+          tokenProgram: TOKEN_PROGRAM_ID,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: anchor.web3.SystemProgram.programId,
+        })
+        .signers([tenantKeypair])
+        .rpc();
+      console.log(JSON.stringify(tx));
+      await provider.connection.confirmTransaction(tx, "processed");
+    } catch (e) {
+      console.error(e);
+    }
+  });
+  it("should pay security deposit", async () => {
+    const collectionAccountAddress = await getAssociatedTokenAddress(
+      mintPubkey,
+      pdaPubkey,
+      true,
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    );
+    const tenantUsdc = await getAssociatedTokenAddress(
+      mintPubkey,
+      tenantPubkey,
+      false,
+      TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
+    );
+    console.log("Creating payment tx");
+    try {
+      const tx = await program.methods
+        .paySecurityDeposit(sdAmount)
         .accounts({
           rentalAgreement: pdaPubkey,
           landlord: landlordPublicKey,

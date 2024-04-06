@@ -32,7 +32,7 @@ use security_deposit::*;
 use staking::*;
 use anchor_spl::{token, token::Transfer as SplTransfer, associated_token::get_associated_token_address};
 
-declare_id!("2hngLBPwfPLtyMZWS8ciU4NTgzT7gicmHEqshWAFMZiQ");
+declare_id!("FWNopUVgzewLx28P9L356GJ1Yfx5o2T8yWHwPuLSLA4B");
 
 #[program]
 pub mod trust_rent {
@@ -45,9 +45,11 @@ pub mod trust_rent {
     pub fn create_rent_agreement(
         ctx: Context<CreateRentalAgreement>,
         rent_amount: u64,
-        start_date: i64,
-        end_date: i64,
+        sd_amount: u64,
+        start_date: u64,
+        end_date: u64,
     ) -> Result<()> {
+        let clock = Clock::get()?;
         let pda = ctx.accounts.rental_agreement.key();
         msg!("Creating rent agreement");
         if start_date >= end_date {
@@ -69,10 +71,17 @@ pub mod trust_rent {
         msg!("Collection account set");
         agreement.rent_amount = rent_amount;
         msg!("Rent amount set");
-        agreement.start_date = start_date as u64;
+        agreement.start_date = start_date;
         msg!("Start date set");
-        agreement.end_date = end_date as u64;
+        agreement.end_date = end_date;
         msg!("End date set");
+        agreement.security_deposit = SecurityDeposit {
+            amount: sd_amount,
+            initiated_date: clock.unix_timestamp as u64,
+            paid_date: 0,
+            payment_status: SecurityDepositPaidStatus::Unpaid,
+            status: SecurityDepositEscrowStatus::Unfunded,
+        };
         msg!("Security deposit set");
         agreement.payment_history = [Payment {
             payment_id: 0,
@@ -84,12 +93,87 @@ pub mod trust_rent {
         Ok(())
     }
 
+    // Tenant can pay rent, need frontend function for this
+    pub fn pay_rent(ctx: Context<PayRent>, amount: u64) -> Result<()> {
+        let rent_amount = amount;
+        let current_payment_details = crate::PayRent::payment_details(ctx.accounts, rent_amount)?;
+
+        if ctx.accounts.payment_collection_account.key() != ctx.accounts.rental_agreement.payment_collection_account.key() {
+            return Err(TrustRentErrors::InvalidPaymentAccount.into());
+        }
+        let agreement = &mut ctx.accounts.rental_agreement;
+        if rent_amount < agreement.rent_amount {
+            return Err(TrustRentErrors::InvalidRentAmount.into());
+        }
+
+        let destination = &ctx.accounts.payment_collection_account;
+        let source = &ctx.accounts.tenant_usdc;
+        let token_program = &ctx.accounts.token_program;
+        let authority = &ctx.accounts.tenant;
+
+        // Transfer tokens from taker to initializer
+        let cpi_accounts = SplTransfer {
+            from: source.to_account_info().clone(),
+            to: destination.to_account_info().clone(),
+            authority: authority.to_account_info().clone(),
+        };
+        let cpi_program = token_program.to_account_info();
+        token::transfer(CpiContext::new(cpi_program, cpi_accounts), rent_amount)?;
+
+        for (p, payment) in agreement.payment_history.iter_mut().enumerate() {
+            if payment.payment_id == 0 {
+                agreement.payment_history[p] = current_payment_details;
+                break;
+            }
+        }
+
+        // Pay rent
+        // Update payment date
+        // Return payment id -- figure out how to generate unique payment id
+        Ok(())
+    }
+    pub fn pay_security_deposit(
+        ctx: Context<PaySecurityDeposit>,
+        amount: u64,
+    ) -> Result<()> {
+        let clock = Clock::get()?;
+        let security_deposit_amount = amount;
+
+        if ctx.accounts.payment_collection_account.key() != ctx.accounts.rental_agreement.payment_collection_account.key() {
+            return Err(TrustRentErrors::InvalidPaymentAccount.into());
+        }
+        let agreement = &mut ctx.accounts.rental_agreement;
+        if security_deposit_amount < agreement.security_deposit.amount {
+            return Err(TrustRentErrors::InvalidSDAmount.into());
+        }
+        let destination = &ctx.accounts.payment_collection_account;
+        let source = &ctx.accounts.tenant_usdc;
+        let token_program = &ctx.accounts.token_program;
+        let authority = &ctx.accounts.tenant;
+
+        // Transfer tokens from taker to initializer
+        let cpi_accounts = SplTransfer {
+            from: source.to_account_info().clone(),
+            to: destination.to_account_info().clone(),
+            authority: authority.to_account_info().clone(),
+        };
+        let cpi_program = token_program.to_account_info();
+        token::transfer(CpiContext::new(cpi_program, cpi_accounts), security_deposit_amount)?;
+
+        agreement.security_deposit.paid_date = clock.unix_timestamp as u64;
+        agreement.security_deposit.payment_status = SecurityDepositPaidStatus::Paid;
+        agreement.security_deposit.status = SecurityDepositEscrowStatus::Escrowed;
+        Ok(())
+    }
+
+
+    /// Need to finish and verify this function
     // Can leave this as Todo for now but eventually need this to be a button on the frontend
     pub fn update_rent_agreement(
         ctx: Context<UpdateRentalAgreement>,
         rent_amount: u64,
-        start_date: i64,
-        end_date: i64,
+        start_date: u64,
+        end_date: u64,
     ) -> Result<()> {
         if start_date >= end_date {
             return Err(TrustRentErrors::InvalidDates.into());
@@ -99,31 +183,23 @@ pub mod trust_rent {
         if agreement.rent_amount != rent_amount {
             agreement.rent_amount = rent_amount;
         }
-        if agreement.start_date != start_date as u64 {
-            agreement.start_date = start_date as u64;
+        if agreement.start_date != start_date {
+            agreement.start_date = start_date;
         }
-        if agreement.end_date != end_date as u64 {
-            agreement.end_date = end_date as u64;
+        if agreement.end_date != end_date {
+            agreement.end_date = end_date;
         }
 
         Ok(())
     }
+
+    /// Below here are all functions that need to be started.
 
     // Need front end function/button to end rent agreement
     pub fn end_rent_agreement(_ctx: Context<EndRentalAgreement>) -> Result<()> {
         todo!()
         // End a rent agreement
     }
-
-    // // Need frontend function for landlord to request tenant to pay security deposit which triggers this function
-    // pub fn initiate_security_deposit_escrow(
-    //     _ctx: Context<InitiateSecurityDepositEscrow>,
-    //     _amount: f64,
-    // ) -> Result<()> {
-    //     todo!()
-    //     // Creates PDA for security deposit while rental agreement is active
-    //     // Update security deposit status to Escrowed
-    // }
 
     // Self explanatory
     pub fn stake_security_deposit(_ctx: Context<StakeSecurityDeposit>, _amount: f64) -> Result<()> {
@@ -178,44 +254,5 @@ pub mod trust_rent {
     pub fn withdraw_rent_payment(_ctx: Context<WithdrawRentPayment>, _amount: u64) -> Result<()> {
         todo!()
         // Withdraw rent payment
-    }
-
-    // Tenant can pay rent, need frontend function for this
-    pub fn pay_rent(ctx: Context<PayRent>, amount: u64) -> Result<()> {
-        let rent_amount = amount;
-        let current_payment_details = crate::PayRent::payment_details(ctx.accounts, rent_amount)?;
-
-        if ctx.accounts.payment_collection_account.key() != ctx.accounts.rental_agreement.payment_collection_account.key() {
-            return Err(TrustRentErrors::InvalidPaymentAccount.into());
-        }
-        let agreement = &mut ctx.accounts.rental_agreement;
-        if rent_amount < agreement.rent_amount {
-            return Err(TrustRentErrors::InvalidRentAmount.into());
-        }
-
-        for (p, payment) in agreement.payment_history.iter_mut().enumerate() {
-            if payment.payment_id == 0 {
-                agreement.payment_history[p] = current_payment_details;
-                break;
-            }
-        }
-        let destination = &ctx.accounts.payment_collection_account;
-        let source = &ctx.accounts.tenant_usdc;
-        let token_program = &ctx.accounts.token_program;
-        let authority = &ctx.accounts.tenant;
-
-        // Transfer tokens from taker to initializer
-        let cpi_accounts = SplTransfer {
-            from: source.to_account_info().clone(),
-            to: destination.to_account_info().clone(),
-            authority: authority.to_account_info().clone(),
-        };
-        let cpi_program = token_program.to_account_info();
-        token::transfer(CpiContext::new(cpi_program, cpi_accounts), rent_amount)?;
-
-        // Pay rent
-        // Update payment date
-        // Return payment id -- figure out how to generate unique payment id
-        Ok(())
     }
 }

@@ -1,13 +1,12 @@
-use crate::Payment;
+use crate::{Payment, SecurityDeposit};
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
     mint,
     token::{Mint, Token, TokenAccount},
 };
-use crate::utils::DEV_USDC_ADDRESS;
-use std::str::FromStr;
-use solana_program::{pubkey, pubkey::Pubkey};
+
+use solana_program::pubkey::Pubkey;
 
 /// Rental agreement related structs
 #[account]
@@ -19,13 +18,14 @@ pub struct RentalAgreement {
     pub rent_amount: u64,
     pub start_date: u64,
     pub end_date: u64,
+    pub security_deposit: SecurityDeposit,
     pub payment_history: [Payment; 12],
 }
 
 #[derive(Accounts)]
 #[instruction(rent: u64, start_date: u64, end_date: u64)]
 pub struct CreateRentalAgreement<'info> {
-    #[account(init, payer = landlord, space = 8 + 128 + 24 + 288, seeds=[
+    #[account(init, payer = landlord, space = 8 + 128 + 24 + 288 + 100, seeds=[
         b"rental_agreement".as_ref(),
         landlord.key.as_ref(),
         tenant.key.as_ref(),
@@ -37,10 +37,6 @@ pub struct CreateRentalAgreement<'info> {
     pub landlord: Signer<'info>,
     /// CHECK: ONLY READING NOT WRITING
     #[account(address = mint::USDC)]
-    // #[account(address = DEV_USDC_ADDRESS)]
-    // #[cfg_attr(
-    // not(feature = "test"),
-    // account(address = mint::USDC))]
     pub usdc_mint: Account<'info, Mint>,
     /// CHECK: ONLY READING TO THIS ACCOUNT NOT WRITING
     pub tenant: AccountInfo<'info>,
