@@ -6,4 +6,6 @@ pub enum TrustRentErrors {
     InvalidRentAmount,
     #[msg("The start date must be before the end date")]
     InvalidDates,
+    #[msg("The specified payment account is invalid")]
+    InvalidPaymentAccount,
 }

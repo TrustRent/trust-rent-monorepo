@@ -1,5 +1,8 @@
-use super::rental_agreement::RentalAgreement;
+use crate::agreement::rental_agreement::*;
 use anchor_lang::prelude::*;
+use anchor_spl::{associated_token::AssociatedToken, mint, token::{Mint, TokenAccount}};
+use solana_program::pubkey;
+use crate::utils::DEV_USDC_ADDRESS;
 
 #[derive(AnchorDeserialize, AnchorSerialize, Default, Clone, Copy)]
 pub struct Payment {
@@ -22,16 +25,28 @@ pub struct WithdrawRentPayment<'info> {
 }
 
 #[derive(Accounts)]
+#[instruction(rent: u64)]
 pub struct PayRent<'info> {
     #[account(mut)]
     pub rental_agreement: Account<'info, RentalAgreement>,
     #[account(mut)]
+    pub payment_collection_account: Account<'info, TokenAccount>,
+    #[account(mut)]
     /// CHECK: ONLY READING AND NOT WRITING TO THIS ACCOUNT
     pub landlord: AccountInfo<'info>,
     #[account(mut)]
-    pub tenant_wallet: Signer<'info>,
+    pub tenant: Signer<'info>,
+    #[account(init_if_needed, payer = tenant,associated_token::mint = usdc_mint, associated_token::authority = tenant)]
+    pub tenant_usdc: Account<'info, TokenAccount>,
+    #[account(address = mint::USDC)]
+    // #[cfg_attr(
+    // not(feature = "test"),
+    // account(address = mint::USDC))]
+    // #[account(address = DEV_USDC_ADDRESS)]
+    pub usdc_mint: Account<'info, Mint>,
     /// CHECK: ONLY READING AND NOT WRITING TO THIS ACCOUNT
     pub token_program: AccountInfo<'info>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
     /// CHECK: ONLY READING AND NOT WRITING TO THIS ACCOUNT
     pub system_program: AccountInfo<'info>,
 }

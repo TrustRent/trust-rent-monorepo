@@ -1,8 +1,10 @@
 use super::payments::{PayRent, Payment};
 
 use anchor_lang::prelude::*;
+use solana_program::pubkey;
 
-pub const USDC_MINT_ADDRESS: &str = "CYXLacQvbrzV4W39AGcLXwM5BKVqJBLLui2xV8tVYdXd";
+pub const USDC_MINT_ADDRESS: &str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+pub const DEV_USDC_ADDRESS: Pubkey = pubkey!("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");
 
 impl<'info> PayRent<'info> {
     pub fn payment_details(&mut self, rent: u64) -> Result<Payment> {
