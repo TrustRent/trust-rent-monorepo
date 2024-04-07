@@ -1,9 +1,9 @@
 
 
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, mint, token::{Mint, TokenAccount}};
+use anchor_spl::{associated_token::AssociatedToken, token::{Mint, TokenAccount}};
 
-use crate::RentalAgreement;
+use crate::{utils::LOCAL_USDC_ADDRESS, RentalAgreement};
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq)]
 pub struct SecurityDeposit {
@@ -43,11 +43,9 @@ pub struct PaySecurityDeposit<'info> {
     pub tenant: Signer<'info>,
     #[account(init_if_needed, payer = tenant,associated_token::mint = usdc_mint, associated_token::authority = tenant)]
     pub tenant_usdc: Account<'info, TokenAccount>,
-    #[account(address = mint::USDC)]
-    // #[cfg_attr(
-    // not(feature = "test"),
-    // account(address = mint::USDC))]
-    // #[account(address = DEV_USDC_ADDRESS)]
+    // #[account(address = mint::USDC)] // Mainnet
+    #[account(address = LOCAL_USDC_ADDRESS)] // Localnet
+    // #[account(address = DEV_USDC_ADDRESS)] // Devnet
     pub usdc_mint: Account<'info, Mint>,
     /// CHECK: ONLY READING AND NOT WRITING TO THIS ACCOUNT
     pub token_program: AccountInfo<'info>,

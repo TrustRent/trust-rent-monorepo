@@ -36,7 +36,7 @@ describe("trust-rent", () => {
   );
   console.log(`tenant: ${tenantPubkey.toString()}`);
   const mintPubkey = new PublicKey(
-    "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
+    "uSDCARvy87Kei3izvHJS3gzecBncTnAeEc2L4qhrJ7o"
   );
 
   const seeds = [
@@ -169,6 +169,9 @@ describe("trust-rent", () => {
     } catch (e) {
       console.error(e);
     }
+    const rentalAgreementAccount =
+      await program.account.rentalAgreement.fetch(pdaPubkey);
+    console.log(rentalAgreementAccount);
   });
   it("should pay security deposit", async () => {
     const collectionAccountAddress = await getAssociatedTokenAddress(
@@ -207,5 +210,8 @@ describe("trust-rent", () => {
     } catch (e) {
       console.error(e);
     }
+    const rentalAgreementAccount =
+      await program.account.rentalAgreement.fetch(pdaPubkey);
+    console.log(rentalAgreementAccount);
   });
 });

@@ -1,0 +1,6 @@
+{
+  "name": "Local USDC",
+  "symbol": "USDC",
+  "description": "localhost usdc for testing",
+  "image": "https://github.com/TrustRent/scaffold-backend/blob/d7826b9df4cf0cce5e6f3a329e53ed88357e18ed/solana_validator_script/DALL%C2%B7E%20Silver%20Coin%20USDC.jpeg"
+}

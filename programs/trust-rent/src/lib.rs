@@ -32,7 +32,7 @@ use security_deposit::*;
 use staking::*;
 use anchor_spl::{token, token::Transfer as SplTransfer, associated_token::get_associated_token_address};
 
-declare_id!("FWNopUVgzewLx28P9L356GJ1Yfx5o2T8yWHwPuLSLA4B");
+declare_id!("8yVrXGA8fPAK8BRVTT1ZQ77zPYvjehqSSbwwiaDtxMRm");
 
 #[program]
 pub mod trust_rent {

@@ -4,14 +4,14 @@
 seeds = false
 skip-lint = false
 
-[programs.devnet]
-trust_rent = "FWNopUVgzewLx28P9L356GJ1Yfx5o2T8yWHwPuLSLA4B"
+[programs.localnet]
+trust_rent = "8yVrXGA8fPAK8BRVTT1ZQ77zPYvjehqSSbwwiaDtxMRm"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "/Users/brandonrobb/.config/solana/id.json"
 
 [scripts]

@@ -1,8 +1,7 @@
-use crate::{Payment, SecurityDeposit};
+use crate::{utils::LOCAL_USDC_ADDRESS, Payment, SecurityDeposit};
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
-    mint,
     token::{Mint, Token, TokenAccount},
 };
 
@@ -35,8 +34,9 @@ pub struct CreateRentalAgreement<'info> {
     pub collection_account: Account<'info, TokenAccount>,
     #[account(mut)]
     pub landlord: Signer<'info>,
-    /// CHECK: ONLY READING NOT WRITING
-    #[account(address = mint::USDC)]
+    // #[account(address = mint::USDC)] // Mainnet
+    #[account(address = LOCAL_USDC_ADDRESS)] // Localnet
+    // #[account(address = DEV_USDC_ADDRESS)] // Devnet
     pub usdc_mint: Account<'info, Mint>,
     /// CHECK: ONLY READING TO THIS ACCOUNT NOT WRITING
     pub tenant: AccountInfo<'info>,
