@@ -1,51 +1,29 @@
-# TrustRent - Revolutionizing Rent Payments on the Solana Blockchain
+# Create T3 App
 
-## Welcome to TrustRent
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
-TrustRent is a cutting-edge web application designed for the Solana network, leveraging the speed and transparency of blockchain to transform the rental market. Our platform is built with the aim of optimizing rent payments and security deposit management, ensuring instant transactions, yielding financial benefits, and fostering trust between tenants and landlords.
+## What's next? How do I make an app with this?
 
-## Our Mission
+We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
 
-To revolutionize the rental payment process by introducing unparalleled efficiency, transparency, and mutual benefit to the tenant-landlord relationship through the innovative use of blockchain technology.
+If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-## Key Features
+- [Next.js](https://nextjs.org)
+- [NextAuth.js](https://next-auth.js.org)
+- [Prisma](https://prisma.io)
+- [Drizzle](https://orm.drizzle.team)
+- [Tailwind CSS](https://tailwindcss.com)
+- [tRPC](https://trpc.io)
 
-### Instant Rent Settlements
-- **For Tenants**: Say goodbye to the hassle of traditional payment methods. Enjoy the simplicity of paying your rent with just a few clicks, directly from your mobile device.
-- **For Landlords**: No more waiting for bank transfers or processing checks. Receive payments instantly in stablecoin, enhancing your liquidity and peace of mind.
+## Learn More
 
-### Yield-Generating Security Deposits
-- **Innovative Handling**: Transform your security deposits into assets that work for you. Earn yields on your deposits through DeFi protocols, with transparent and fair returns.
-- **Flexible Utilization**: Experience financial flexibility by using your security deposit to cover rent when needed, ensuring peace of mind without compromising on your commitments.
+To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
 
-### Market for Rental Coverage Liquidity
-- **Economic Stability**: Our platform allows liquidity providers to support housing stability, creating a safety net during economic downturns while offering attractive returns.
+- [Documentation](https://create.t3.gg/)
+- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
 
-## Benefits
+You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
 
-- **Enhanced Cash Flow**: Immediate settlement of rent payments ensures landlords can manage their finances more effectively and reinvest in their properties quicker.
-- **Financial Empowerment**: Tenants benefit from the potential yields their security deposits can generate, reducing overall living expenses.
-- **Transparent Transactions**: Blockchain technology ensures that all transactions and yield distributions are transparent and verifiable, building trust between all parties involved.
+## How do I deploy this?
 
-## Why TrustRent?
-
-- **For Tenants**: Gain control over your finances with flexible, efficient rent payment options and the ability to earn from your security deposit.
-- **For Landlords**: Enjoy instant rent payments, turn security deposits into yield-generating assets, and benefit from a streamlined, transparent management system.
-- **For Investors**: Participate in a platform at the forefront of the fusion between real estate and blockchain technology, poised to capture a significant market share in the booming rental industry.
-
-## Total Addressable Market (TAM)
-
-- With 45.2 million renter-occupied units and a growing preference for online rent payments, TrustRent addresses a substantial market opportunity in the rental payment space, aiming to capture a significant portion of the $753 billion annual rent payment market.
-
-## Join Us
- 
-TrustRent is not just a platform; it's a movement towards redefining the future of the rental industry. We invite you to join us on this journey as we explore the capabilities of our protocol and the bright future it promises for tenants, landlords, and investors alike.
-
-For partnerships, investment opportunities, or to learn more about TrustRent, please contact us at [contact@trustrent.com].
-
----
-
-TrustRent - Building Trust, One Transaction at a Time.
-
-
-Powered by T3.gg and Solana
+Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
