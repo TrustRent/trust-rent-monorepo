@@ -3,9 +3,9 @@
 
 import {
   index,
+  integer,
   pgTableCreator,
   serial,
-  timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -18,12 +18,14 @@ import {
 export const createTable = pgTableCreator((name) => `trust-rent_${name}`);
 
 export const posts = createTable(
-  "post",
+  "RentalAgreement",
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull(),
-    updatedAt: timestamp("updatedAt", { withTimezone: true }),
+    rentAmount: integer("rentAmount"),
+    sdAmount: integer("sdAmount"),
+    startDate: integer("startDate"),
+    endDate: integer("endDate"),
   },
   (example) => ({
     nameIndex: index("name_idx").on(example.name),

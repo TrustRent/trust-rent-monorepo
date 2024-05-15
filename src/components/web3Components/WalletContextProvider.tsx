@@ -8,9 +8,10 @@ import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import {
   AlphaWalletAdapter,
   LedgerWalletAdapter,
+  PhantomWalletAdapter,
   SolflareWalletAdapter,
 } from "@solana/wallet-adapter-wallets";
-import { type FC, useMemo } from "react";
+import { type FC } from "react";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 
@@ -20,16 +21,14 @@ type Props = {
 
 export const Wallet: FC<Props> = ({ children }) => {
   //input your RPC as your endpoint value
-  const endpoint = "https://api-devnet.helius.xyz";
+  const endpoint = "https://api.devnet.solana.com";
 
-  const wallets = useMemo(
-    () => [
-      new SolflareWalletAdapter(),
-      new AlphaWalletAdapter(),
-      new LedgerWalletAdapter(),
-    ],
-    [],
-  );
+  const wallets = [
+    new PhantomWalletAdapter(),
+    new SolflareWalletAdapter(),
+    new AlphaWalletAdapter(),
+    new LedgerWalletAdapter(),
+  ];
 
   return (
     <ConnectionProvider endpoint={endpoint}>

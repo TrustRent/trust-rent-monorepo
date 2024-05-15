@@ -2,7 +2,7 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import React from "react";
-import { Wallet } from "~/components/web3Components/Wallet";
+import { Wallet } from "~/components/web3Components/WalletContextProvider";
 import Sidebar from "~/components/sidebar";
 import Header from "~/components/header";
 
