@@ -1,0 +1,5 @@
+{
+  "name": "TOKEN_NAME",
+  "symbol": "SYM",
+  "uri": "https://github.com/TrustRent/scaffold-backend/blob/dapp-scaffold/solana_validator_script/usdc-data.json"
+}
