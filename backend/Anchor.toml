@@ -1,17 +1,18 @@
 [toolchain]
+anchor_version = "0.29.0"
 
 [features]
 seeds = false
 skip-lint = false
 
-[programs.localnet]
-trust_rent = "8yVrXGA8fPAK8BRVTT1ZQ77zPYvjehqSSbwwiaDtxMRm"
+[programs.devnet]
+trust_rent = "YxJNQxxxtnduNvg4auJVq33AF4nn9pCKPi7HiVeGNsM"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/Users/brandonrobb/.config/solana/id.json"
 
 [scripts]

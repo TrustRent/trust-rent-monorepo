@@ -1,7 +1,7 @@
 use crate::agreement::rental_agreement::*;
 use anchor_lang::prelude::*;
 use anchor_spl::{associated_token::AssociatedToken, token::{Mint, TokenAccount}};
-use crate::utils::LOCAL_USDC_ADDRESS;
+use crate::utils::DEV_USDC_ADDRESS;
 
 #[derive(AnchorDeserialize, AnchorSerialize, Default, Clone, Copy)]
 pub struct Payment {
@@ -38,8 +38,8 @@ pub struct PayRent<'info> {
     #[account(init_if_needed, payer = tenant,associated_token::mint = usdc_mint, associated_token::authority = tenant)]
     pub tenant_usdc: Account<'info, TokenAccount>,
     // #[account(address = mint::USDC)] // Mainnet
-    #[account(address = LOCAL_USDC_ADDRESS)] // Localnet
-    // #[account(address = DEV_USDC_ADDRESS)] // Devnet
+    // #[account(address = LOCAL_USDC_ADDRESS)] // Localnet
+    #[account(address = DEV_USDC_ADDRESS)] // Devnet
     pub usdc_mint: Account<'info, Mint>,
     /// CHECK: ONLY READING AND NOT WRITING TO THIS ACCOUNT
     pub token_program: AccountInfo<'info>,

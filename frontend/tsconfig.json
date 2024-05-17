@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
 
     /* Strictness */
     "strict": true,
@@ -26,7 +27,8 @@
     /* Path Aliases */
     "baseUrl": ".",
     "paths": {
-      "~/*": ["./src/*"]
+      "~/*": ["./src/*"],
+      "@project-serum/anchor": ["node_modules/@project-serum/anchor"]
     }
   },
   "include": [

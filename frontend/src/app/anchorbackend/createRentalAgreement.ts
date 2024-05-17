@@ -3,13 +3,13 @@ import {
   type BlockheightBasedTransactionConfirmationStrategy,
   PublicKey,
 } from "@solana/web3.js";
+import { TrustRent } from "/Users/brandonrobb/Github_Projects/trust-rent-monorepo/backend/target/types/trust_rent";
 import {
   TOKEN_PROGRAM_ID,
   ASSOCIATED_TOKEN_PROGRAM_ID,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
 import { getProgram, getProvider } from "~/components/web3Components/program";
-import { RentalAgreement } from "~/types/ContractTypes";
 export const createRentalAgreement = async (
   wallet: anchor.Wallet,
   tenantWallet: PublicKey,
@@ -20,7 +20,7 @@ export const createRentalAgreement = async (
 ) => {
   const provider = getProvider(wallet);
   const program = getProgram(provider);
-
+  let rentalAgreementAccount: anchor.IdlAccounts<TrustRent>["rentalAgreement"];
   const seeds = [
     Buffer.from("rental-agreement"),
     wallet.publicKey.toBuffer(),
@@ -49,7 +49,6 @@ export const createRentalAgreement = async (
   const sdBN: anchor.BN = new anchor.BN(sdAmount);
   const startBN: anchor.BN = new anchor.BN(startDate);
   const endBN: anchor.BN = new anchor.BN(endDate);
-
   try {
     if (!program.methods.createRentAgreement) {
       return { message: "Method createRentAgreement not found" };
@@ -82,22 +81,5 @@ export const createRentalAgreement = async (
     await provider.connection.confirmTransaction(confirmStrategy, "processed");
   } catch (e) {
     return { message: "Error creating rental agreement" };
-  }
-  try {
-    if (!program.account.rentalAgreement) return;
-    const rentalAgreementAccount =
-      await program.account.rentalAgreement?.fetch(pdaPubkey);
-
-    if (
-      !rentalAgreementAccount.rentAmount ||
-      !rentalAgreementAccount.paymentHistory
-    )
-      return;
-    const rentalAgreementData: RentalAgreement = await Promise.all([
-      rentalAgreementAccount.paymentHistory as RentalAgreement["paymentHistory"],
-      rentalAgreementAccount.rentAmount as number,
-    ]);
-  } catch (e) {
-    return { message: "Cannot not find accounts" };
   }
 };
