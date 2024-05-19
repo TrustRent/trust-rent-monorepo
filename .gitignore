@@ -31,7 +31,7 @@ db.sqlite
 # backend
 /backend/.anchor
 /backend/.DS_Store
-/backend/target
+/backend/target/*
 /backend/**/*.rs.bk
 /backend/test-ledger
 /backend/.yarn
