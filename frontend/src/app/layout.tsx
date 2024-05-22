@@ -21,8 +21,10 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable}`}>
       <body>
         <Wallet>
-          <Sidebar />
-          <Header />
+          <div className="hidden md:flex">
+            <Sidebar />
+            <Header />
+          </div>
           {children}
         </Wallet>
       </body>
